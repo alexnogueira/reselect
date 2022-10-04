@@ -1,6 +1,7 @@
 import type { Selector, GetParamsFromSelectors, OutputSelector, SelectorArray, SelectorResultArray, DropFirst, MergeParameters, Expand, ObjValueTuple, Head, Tail } from './types';
 export type { Selector, GetParamsFromSelectors, OutputSelector, EqualityFn, SelectorArray, SelectorResultArray, ParametricSelector, OutputParametricSelector, OutputSelectorFields } from './types';
 import { defaultMemoize, defaultEqualityCheck, DefaultMemoizeOptions } from './defaultMemoize';
+import * as errorSubscriptions from './error_subscriptions';
 export { defaultMemoize, defaultEqualityCheck };
 export type { DefaultMemoizeOptions };
 export declare function createSelectorCreator<
@@ -46,3 +47,4 @@ export interface StructuredSelectorCreator {
     }, selectorCreator?: CreateSelectorFunction<any, any, any>): Selector<State, Result, never>;
 }
 export declare const createStructuredSelector: StructuredSelectorCreator;
+export declare const subscribeToErrors: typeof errorSubscriptions.subscribe;

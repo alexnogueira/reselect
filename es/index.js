@@ -1,4 +1,5 @@
 import { defaultMemoize, defaultEqualityCheck } from './defaultMemoize';
+import * as errorSubscriptions from './error_subscriptions';
 export { defaultMemoize, defaultEqualityCheck };
 
 function getDependencies(funcs) {
@@ -62,9 +63,15 @@ export function createSelectorCreator(memoize) {
     var finalMemoizeOptions = Array.isArray(memoizeOptions) ? memoizeOptions : [memoizeOptions];
     var dependencies = getDependencies(funcs);
     var memoizedResultFunc = memoize.apply(void 0, [function recomputationWrapper() {
-      _recomputations++; // apply arguments instead of spreading for performance.
+      _recomputations++;
 
-      return resultFunc.apply(null, arguments);
+      try {
+        // apply arguments instead of spreading for performance.
+        return resultFunc.apply(null, arguments);
+      } catch (e) {
+        errorSubscriptions.emitError(e, resultFunc, arguments, dependencies);
+        throw e;
+      }
     }].concat(finalMemoizeOptions)); // If a selector is called with the exact same arguments we don't need to traverse our dependencies again.
 
     var selector = memoize(function dependenciesChecker() {
@@ -128,3 +135,4 @@ export var createStructuredSelector = function createStructuredSelector(selector
   });
   return resultSelector;
 };
+export var subscribeToErrors = errorSubscriptions.subscribe;
